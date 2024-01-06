@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 SRCS = pipex.c \
 		pipex_utils.c \
-		ft_split.c
+		libft/libft.a
 
 OBJS = ${SRCS:.c=.o}
 
@@ -17,8 +17,10 @@ ${NAME}: ${OBJS}
 
 clean:
 	rm -f ${OBJS}
+	make clean -C libft
 
 fclean: clean
 	rm -f ${NAME}
+	make fclean -C libft
 
 re: fclean all
