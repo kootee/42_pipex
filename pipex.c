@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/06 15:40:03 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/06 15:54:21 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ static void	ft_pipex(t_pipex *pipex_args)
 		else
 			parent_process(pipex_args);
 	}
+	
 }
 
 int	main(int argc, char **argv, char **envp)
