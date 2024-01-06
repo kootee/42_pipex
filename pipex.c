@@ -6,13 +6,13 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/06 15:54:21 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/06 17:33:09 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_execute(char **cmds_path, char **env)
+static int	ft_execute(char *cmds_path, char **env)
 {
 	char **cmds;
 	char *path;
@@ -23,6 +23,7 @@ void	ft_execute(char **cmds_path, char **env)
 		return (-1); //error no environment path was found
 	if (execve(path, cmds, env) < 0)
 		return (-1); //error here
+	return (0);
 }
 
 static void	child_process(t_pipex *pipex_args)
@@ -32,7 +33,6 @@ static void	child_process(t_pipex *pipex_args)
 	close(pipex_args->pipe[0]);
 	ft_execute(pipex_args->cmd_args[2], pipex_args->env_path);
 	close(pipex_args->pipe[1]);
-	exit(EXIT_FAILURE);
 }
 
 static void	parent_process(t_pipex *pipex_args)
@@ -40,16 +40,12 @@ static void	parent_process(t_pipex *pipex_args)
 	dup2(pipex_args->pipe[1], STDOUT_FILENO);
 	dup2(pipex_args->pipe[0], STDIN_FILENO);
 	close(pipex_args->pipe[1]);
-	//excve with cmd args [3]
 	ft_execute(pipex_args->cmd_args[3], pipex_args->env_path); //or second to last one 
 	close(pipex_args->pipe[0]);
-	exit(EXIT_FAILURE);
 }
 
 static void	ft_pipex(t_pipex *pipex_args)
 {
-	/* add a while loop for bonus - needs to iterate al the commands of argv
-	also for the pipes[index][0/1] */
 	pid_t	pid;
 	int		i;
 	
@@ -57,16 +53,18 @@ static void	ft_pipex(t_pipex *pipex_args)
 	while (++i < pipex_args->cmd_count)
 	{
 		if (pipe(pipex_args->pipe) < 0)
-			return (-1); //add errorcode
+			exit(EXIT_PIPE_ERROR);
 		pid = fork(); 
 		if (pid < 0)
-			return (perror("Fork: "));
+		{
+			perror("Fork failed");
+			exit(EXIT_FAILURE);
+		}
 		if (pid == 0)
 			child_process(pipex_args);
 		else
 			parent_process(pipex_args);
 	}
-	
 }
 
 int	main(int argc, char **argv, char **envp)

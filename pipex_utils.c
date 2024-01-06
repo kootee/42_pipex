@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/06 15:09:31 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/06 16:33:44 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,16 @@ void	ft_check_args(t_pipex *pipex_args, char **argv, char **envp)
 	i = 0;
 	pipex_args->pipe[0] = open(argv[1], O_RDONLY);
 	if (pipex_args->pipe[0] < 0)
-		return (-1); //add error
+	{
+		perror("Error on open");
+		exit(EXIT_FILE_OPEN_ERROR);
+	}
 	pipex_args->pipe[1] = open(argv[4], O_CREAT | O_RDWR | O_TRUNC | 0644);
 	if (pipex_args->pipe[1] < 0)
-		return (-1); //add error
+	{
+		perror("Error on open");
+		exit(EXIT_FILE_OPEN_ERROR);
+	}
 	pipex_args->cmd_args = argv;
 	pipex_args->env_path = envp;
 }

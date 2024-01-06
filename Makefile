@@ -13,7 +13,10 @@ OBJS = ${SRCS:.c=.o}
 all: ${NAME}
 
 ${NAME}: ${OBJS}
-	${CC} ${CFLAGS} -c ${SRCS}
+	${CC} ${CFLAGS} ${SRCS} -o ${NAME}
+
+libft/libft.a:
+	${MAKE} -C libft
 
 clean:
 	rm -f ${OBJS}
