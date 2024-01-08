@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/06 17:33:09 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/08 16:34:48 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ static int	ft_execute(char *cmds_path, char **env)
 	char *path;
 	
 	cmds = ft_split(cmds_path, ' '); //malloc protect
+	printf("from execute\n");
+	printf("cmds path is %s\n", cmds_path);
+	printf("%s\n", cmds[0]);
+	printf("%s\n", cmds[1]);
+	fflush(stdout);
 	path = ft_get_path(env);
 	if (path == NULL)
 		return (-1); //error no environment path was found
@@ -69,8 +74,19 @@ static void	ft_pipex(t_pipex *pipex_args)
 
 int	main(int argc, char **argv, char **envp)
 {
+	
 	t_pipex *pipex_args;
-
+	printf("%s\n", argv[0]);
+	printf("%s\n", argv[1]);
+	printf("%s\n", argv[2]);
+	printf("%s\n", argv[3]);
+	printf("%s\n", argv[4]);
+	int	i = 0;
+	while (envp[i])
+	{
+		printf("env at pointer index %i is %s\n", i, envp[i]);
+		i++;
+	}
 	if (argc < 4)
 		return (-1); //return error about invalid arguments
 	pipex_args = malloc(sizeof(t_pipex));

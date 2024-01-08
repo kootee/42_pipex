@@ -13,17 +13,17 @@ OBJS = ${SRCS:.c=.o}
 all: ${NAME}
 
 ${NAME}: ${OBJS}
-	${CC} ${CFLAGS} ${SRCS} -o ${NAME}
+	${CC} -g ${CFLAGS} ${SRCS} -o ${NAME}
 
-libft/libft.a:
-	${MAKE} -C libft
+#libft/libft.a:
+#	${MAKE} -C libft
 
 clean:
 	rm -f ${OBJS}
-	make clean -C libft
+#	make clean -C libft
 
 fclean: clean
 	rm -f ${NAME}
-	make fclean -C libft
+#	make fclean -C libft
 
 re: fclean all
