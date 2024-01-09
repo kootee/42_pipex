@@ -11,15 +11,8 @@
 			"envFile": "${workspaceFolder}/env_file.txt", 
             "externalConsole": false,
             "MIMode": "lldb",
-			"args": ["file_in.txt", "cat -a", "wc", "file_out.txt"],
-			"setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-			"stopAtEntry": false,
+			"args": ["f_in.txt", "cat -a", "wc", "output.txt"],
+			"stopAtEntry": true,
             "serverLaunchTimeout": 5000,
             "filterStderr": false,
             "filterStdout": false,

@@ -6,50 +6,58 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/08 16:34:48 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/09 14:20:40 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static int	ft_execute(char *cmds_path, char **env)
+static void	ft_execute(char *cmds_path, char **env_paths, char **envp)
 {
 	char **cmds;
-	char *path;
+	char *exec_path;
 	
 	cmds = ft_split(cmds_path, ' '); //malloc protect
-	printf("from execute\n");
-	printf("cmds path is %s\n", cmds_path);
-	printf("%s\n", cmds[0]);
-	printf("%s\n", cmds[1]);
-	fflush(stdout);
-	path = ft_get_path(env);
-	if (path == NULL)
-		return (-1); //error no environment path was found
-	if (execve(path, cmds, env) < 0)
-		return (-1); //error here
-	return (0);
+	while (*env_paths)
+	{
+		exec_path = ft_strjoin(*env_paths, "/");
+		exec_path = ft_strjoin(exec_path, cmds[0]);
+		printf("exec path %s\n", exec_path);
+		if (access(exec_path, F_OK & X_OK) < 0)
+			env_paths++;
+		else
+		{
+			if (execve(exec_path, cmds, envp) < 0)
+				perror("execve faliled"); //error here
+		}
+	}
 }
 
-static void	child_process(t_pipex *pipex_args)
+static void	child_process(t_pipex *pipex_args, int	cmd_num, char **envp)
 {
+	printf("child process\n");
 	dup2(pipex_args->pipe[0], STDIN_FILENO);
 	dup2(pipex_args->pipe[1], STDOUT_FILENO);
 	close(pipex_args->pipe[0]);
-	ft_execute(pipex_args->cmd_args[2], pipex_args->env_path);
 	close(pipex_args->pipe[1]);
+	ft_execute(pipex_args->cmd_args[cmd_num], pipex_args->env_paths, envp);
+	exit(1);
 }
 
-static void	parent_process(t_pipex *pipex_args)
+static void	parent_process(t_pipex *pipex_args, char **envp)
 {
+	int	cmd_num;
+	printf("command count is %i\n", (pipex_args->cmd_count));
+	printf("command to execute is %i\n", pipex_args->cmd_count + 2);
+	cmd_num = pipex_args->cmd_count + 1;
 	dup2(pipex_args->pipe[1], STDOUT_FILENO);
 	dup2(pipex_args->pipe[0], STDIN_FILENO);
 	close(pipex_args->pipe[1]);
-	ft_execute(pipex_args->cmd_args[3], pipex_args->env_path); //or second to last one 
+	ft_execute(pipex_args->cmd_args[cmd_num], pipex_args->env_paths, envp); //or second to last one 
 	close(pipex_args->pipe[0]);
 }
 
-static void	ft_pipex(t_pipex *pipex_args)
+static void	ft_pipex(t_pipex *pipex_args, char **envp)
 {
 	pid_t	pid;
 	int		i;
@@ -57,6 +65,7 @@ static void	ft_pipex(t_pipex *pipex_args)
 	i = 0;
 	while (++i < pipex_args->cmd_count)
 	{
+		fflush(stdout);
 		if (pipe(pipex_args->pipe) < 0)
 			exit(EXIT_PIPE_ERROR);
 		pid = fork(); 
@@ -66,9 +75,12 @@ static void	ft_pipex(t_pipex *pipex_args)
 			exit(EXIT_FAILURE);
 		}
 		if (pid == 0)
-			child_process(pipex_args);
+			child_process(pipex_args, i, envp);
 		else
-			parent_process(pipex_args);
+		{
+			wait(NULL);
+			parent_process(pipex_args, envp);
+		}
 	}
 }
 
@@ -76,15 +88,11 @@ int	main(int argc, char **argv, char **envp)
 {
 	
 	t_pipex *pipex_args;
-	printf("%s\n", argv[0]);
-	printf("%s\n", argv[1]);
-	printf("%s\n", argv[2]);
-	printf("%s\n", argv[3]);
-	printf("%s\n", argv[4]);
 	int	i = 0;
+
 	while (envp[i])
 	{
-		printf("env at pointer index %i is %s\n", i, envp[i]);
+		printf("env variable %d is %s\n", i, envp[i]);
 		i++;
 	}
 	if (argc < 4)
@@ -94,7 +102,9 @@ int	main(int argc, char **argv, char **envp)
 		return (-1); //add error
 	ft_init_pipex(pipex_args, argc); // set default values
 	ft_check_args(pipex_args, argv, envp); //opens files and sets fds to pipex args
-	ft_pipex(pipex_args);
+	if (pipex_args->env_paths == NULL)
+		return (-1); //error no environment paths
+	ft_pipex(pipex_args, envp);
 	ft_clear_all(pipex_args);
 	return (0);
 }
