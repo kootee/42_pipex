@@ -6,56 +6,51 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/10 17:16:08 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/11 09:55:15 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	ft_execute(char *cmds_path, char **env_paths, char **envp)
+static void	ft_execute(t_pipex *pipex_args, int cmd_n)
 {
 	char **cmds;
 	char *exec_path;
+	//char *path;
 	
-	cmds = ft_split(cmds_path, ' '); //malloc protect
-	while (*env_paths)
-	{
-		exec_path = ft_strjoin(*env_paths, "/");
-		exec_path = ft_strjoin(exec_path, cmds[0]);
-		printf("exec path %s\n", exec_path);
-		if (access(exec_path, F_OK & X_OK) < 0)
-			env_paths++;
-		else
-		{
-			if (execve(exec_path, cmds, envp) < 0)
-				perror("execve faliled"); //error here
-		}
+	cmds = ft_split(pipex_args->cmd_args[cmd_n], ' '); //malloc protect
+	exec_path = ft_get_env_paths(pipex_args, cmd_n);
+	if (exec_path == NULL)
+		perror("No exec path fund for command");
+	if (execve(exec_path, cmds, pipex_args->env_paths) < 0)
+	{		
+		//free cmds
+		perror("execve faliled");
+		exit(EXIT_EXEC_ERROR);
 	}
 }
 
-static void	child_process(t_pipex *pipex_args, int	cmd_num, char **envp)
+static void	child_process(t_pipex *pipex_args, int	cmd_num)
 {
 	printf("child process\n");
 	printf("running commands from arg %d\n", cmd_num);
 	close(pipex_args->pipe[0]); // this one (read end of pipe) is NOT USED IN CHILD PROCESS!
 	dup2(pipex_args->fd_IO[0], STDIN_FILENO); // has to be from fd where is read from
 	dup2(pipex_args->pipe[1], STDOUT_FILENO); // fd where to write
-	//close(pipex_args->pipe[1]);
-	ft_execute(pipex_args->cmd_args[cmd_num], pipex_args->env_paths, envp);
+	ft_execute(pipex_args, cmd_num);
 }
 
-static void	parent_process(t_pipex *pipex_args, char **envp)
+static void	parent_process(t_pipex *pipex_args)
 {
 	printf("parent process\n");
 	printf("running commands from arg %d\n", pipex_args->cmd_count + 1);
 	close(pipex_args->pipe[1]); // this one (write end of pipe) is NOT USED IN CHILD PROCESS!
 	dup2(pipex_args->pipe[0], STDIN_FILENO); //where to read from
-	dup2(pipex_args->fd_IO[1], STDOUT_FILENO); //where to write tom
-	//close(pipex_args->pipe[0]);
-	ft_execute(pipex_args->cmd_args[pipex_args->cmd_count + 1], pipex_args->env_paths, envp); //or second to last one 
+	dup2(pipex_args->fd_IO[1], STDOUT_FILENO); //where to write to
+	ft_execute(pipex_args, pipex_args->cmd_count + 1); //or second to last one 
 }
 
-static void	ft_pipex(t_pipex *pipex_args, char **envp)
+static void	ft_pipex(t_pipex *pipex_args)
 {
 	pid_t	pid;
 	int		i;
@@ -71,11 +66,11 @@ static void	ft_pipex(t_pipex *pipex_args, char **envp)
 		exit(EXIT_FAILURE);
 	}
 	if (pid == 0)
-		child_process(pipex_args, 2, envp);
+		child_process(pipex_args, 2);
 	else
 	{
 		wait(NULL);
-		parent_process(pipex_args, envp);
+		parent_process(pipex_args);
 	}
 }
 
@@ -83,6 +78,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	
 	t_pipex *pipex_args;
+	int	i = 0;
 
 	if (argc < 4)
 		return (-1); //return error about invalid arguments
@@ -90,12 +86,13 @@ int	main(int argc, char **argv, char **envp)
 	if (pipex_args == NULL)
 		return (-1); //add error
 	ft_init_pipex(pipex_args, argc); // set default values
-	printf("fd initialised as %d for outfile and %d for infile\n", pipex_args->fd_IO[0], pipex_args->fd_IO[1]);
 	ft_check_args(pipex_args, argv, envp); //opens files and sets fds to pipex args
-	if (pipex_args->env_paths == NULL)
-		return (-1); //error no environment paths
-	ft_pipex(pipex_args, envp);
-	fflush(stdout);
+	ft_pipex(pipex_args);
 	ft_close_all(pipex_args);
 	return (0);
 }
+/* 	while (pipex_args->env_paths[i])
+	{
+		printf("env %d: %s\n", i, pipex_args->env_paths[i]);
+		i++;
+	} */

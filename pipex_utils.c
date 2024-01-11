@@ -6,24 +6,11 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/10 15:55:43 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/11 09:55:45 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void ft_get_env_paths(t_pipex *pipex_args, char **env)
-{
-	while (*env)
-	{
-		if (ft_strnstr(*env, "PATH", 5))
-		{			
-			pipex_args->env_paths = ft_split((*env + 5), ':'); //malloc protect (*env + 5);
-			return ;
-		}		
-		env++;
-	}
-}
 
 void	ft_init_pipex(t_pipex *pipex_args, int argc)
 {
@@ -39,6 +26,34 @@ void	ft_init_pipex(t_pipex *pipex_args, int argc)
 	pipex_args->fd_IO[0] = 0;
 	pipex_args->fd_IO[1] = 0;
 	return ;
+}
+
+char *ft_get_env_paths(t_pipex *pipex_args, int cmd_n)
+{
+	char	**all_env;
+	char	*exec_path;
+	
+	while (*pipex_args->env_paths)
+	{
+		if (ft_strnstr(*pipex_args->env_paths, "PATH", 5))
+		{			
+			all_env = ft_split((*pipex_args->env_paths + 5), ':'); //malloc protect
+			while (*all_env)
+			{
+				exec_path = ft_strjoin(*all_env, "/");
+				exec_path = ft_strjoin(exec_path, pipex_args->cmd_args[cmd_n]);
+				if (access(exec_path, F_OK & X_OK) < 0)
+					all_env++;
+				else
+				{
+					//free all_env
+					return (exec_path);
+				}
+			}
+		}		
+		pipex_args->env_paths++;
+	}
+	return (NULL);
 }
 
 void	ft_check_args(t_pipex *pipex_args, char **argv, char **envp)
@@ -59,7 +74,7 @@ void	ft_check_args(t_pipex *pipex_args, char **argv, char **envp)
 		exit(EXIT_FILE_OPEN_ERROR);
 	}
 	pipex_args->cmd_args = argv;
-	ft_get_env_paths(pipex_args, envp);
+	pipex_args->env_paths = envp;
 }
 
 void	ft_close_all(t_pipex *pipex_args)

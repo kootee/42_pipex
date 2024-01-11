@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/10 17:17:29 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/11 09:44:19 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # define EXIT_FILE_OPEN_ERROR 1
 # define EXIT_FILE_READ_ERROR 2
 # define EXIT_PIPE_ERROR 3
+# define EXIT_EXEC_ERROR 4
 
 typedef struct s_pipex
 {
@@ -40,7 +41,7 @@ typedef struct s_pipex
 int		main(int argc, char **argv, char **envp);
 void	ft_init_pipex(t_pipex *pipex_args, int argc);
 void	ft_check_args(t_pipex *pipex_args, char **args, char **envp);
-void	ft_get_env_paths(t_pipex *pipex_args, char **env);
+char	*ft_get_env_paths(t_pipex *pipex_args, int cmd_n);
 void	ft_close_all(t_pipex *pipex_args);
 
 #endif
