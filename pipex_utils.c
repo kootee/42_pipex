@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/11 09:55:45 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/11 12:24:54 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,17 @@ void	ft_check_args(t_pipex *pipex_args, char **argv, char **envp)
 	int	i;
 	
 	i = 0;
+	printf("path names are %s for infile and %s for outfile\n", argv[1], argv[4]);
 	pipex_args->fd_IO[0] = open(argv[1], O_RDONLY);
 	if (pipex_args->fd_IO[0] < 0)
 	{
-		perror("Error on open");
+		perror("Error on opening infile:");
 		exit(EXIT_FILE_OPEN_ERROR);
 	}
 	pipex_args->fd_IO[1] = open(argv[4], O_CREAT | O_RDWR | O_TRUNC | 0644);
 	if (pipex_args->fd_IO[1] < 0)
 	{
-		perror("Error on open");
+		perror("Error on opening outfile:");
 		exit(EXIT_FILE_OPEN_ERROR);
 	}
 	pipex_args->cmd_args = argv;

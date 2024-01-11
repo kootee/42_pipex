@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/11 09:55:15 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/11 12:26:44 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static void	child_process(t_pipex *pipex_args, int	cmd_num)
 {
 	printf("child process\n");
 	printf("running commands from arg %d\n", cmd_num);
+	close(pipex_args->fd_IO[1]);
 	close(pipex_args->pipe[0]); // this one (read end of pipe) is NOT USED IN CHILD PROCESS!
 	dup2(pipex_args->fd_IO[0], STDIN_FILENO); // has to be from fd where is read from
 	dup2(pipex_args->pipe[1], STDOUT_FILENO); // fd where to write
@@ -42,7 +43,7 @@ static void	child_process(t_pipex *pipex_args, int	cmd_num)
 
 static void	parent_process(t_pipex *pipex_args)
 {
-	printf("parent process\n");
+	printf("parent process starting\n");
 	printf("running commands from arg %d\n", pipex_args->cmd_count + 1);
 	close(pipex_args->pipe[1]); // this one (write end of pipe) is NOT USED IN CHILD PROCESS!
 	dup2(pipex_args->pipe[0], STDIN_FILENO); //where to read from
@@ -58,12 +59,12 @@ static void	ft_pipex(t_pipex *pipex_args)
 	i = 0;
 	if (pipe(pipex_args->pipe) < 0)
 		exit(EXIT_PIPE_ERROR);
-	printf("=========FORKKING NOW=========\n");
+	printf("=========FORKING NOW!!!=========\n");
 	pid = fork(); 
 	if (pid < 0)
 	{
 		perror("Fork failed");
-		exit(EXIT_FAILURE);
+		exit(EXIT_FORK_ERROR);
 	}
 	if (pid == 0)
 		child_process(pipex_args, 2);
@@ -78,10 +79,9 @@ int	main(int argc, char **argv, char **envp)
 {
 	
 	t_pipex *pipex_args;
-	int	i = 0;
 
-	if (argc < 4)
-		return (-1); //return error about invalid arguments
+	if (argc != 5)
+		perror("invalid no of parameters given"); //return error about invalid arguments
 	pipex_args = malloc(sizeof(t_pipex));
 	if (pipex_args == NULL)
 		return (-1); //add error
@@ -91,8 +91,3 @@ int	main(int argc, char **argv, char **envp)
 	ft_close_all(pipex_args);
 	return (0);
 }
-/* 	while (pipex_args->env_paths[i])
-	{
-		printf("env %d: %s\n", i, pipex_args->env_paths[i]);
-		i++;
-	} */
