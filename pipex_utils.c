@@ -6,20 +6,20 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/12 10:56:50 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/12 11:05:38 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_free_on_error(char **cmds)
+void	ft_free_on_error(char **ptrs_to_free)
 {
-	while (*cmds)
+	while (*ptrs_to_free)
 	{
-		free(*cmds);
-		cmds++;
+		free(*ptrs_to_free);
+		ptrs_to_free++;
 	}
-	free(cmds);
+	free(ptrs_to_free);
 }
 
 void	ft_init_pipex(t_pipex *pipex_args, int argc)
@@ -56,7 +56,7 @@ char *ft_get_env_paths(t_pipex *pipex_args, int cmd_n)
 					all_env++;
 				else
 				{
-					//free all_env
+					ft_free_on_error(all_env);
 					return (exec_path);
 				}
 			}
