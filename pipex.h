@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/11 10:20:21 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/12 10:55:45 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@
 # include "libft/libft.h"
 
 /* Error message constants */
-# define EXIT_FILE_OPEN_ERROR 1
-# define EXIT_FILE_READ_ERROR 2
-# define EXIT_PIPE_ERROR 3
-# define EXIT_EXEC_ERROR 4
-# define EXIT_FORK_ERROR 5
+# define EXIT_FILE_OPEN_ERROR 3
+# define EXIT_FILE_READ_ERROR 4
+# define EXIT_PIPE_ERROR 5
+# define EXIT_EXEC_ERROR 6
+# define EXIT_FORK_ERROR 7
 
 typedef struct s_pipex
 {
@@ -44,5 +44,6 @@ void	ft_init_pipex(t_pipex *pipex_args, int argc);
 void	ft_check_args(t_pipex *pipex_args, char **args, char **envp);
 char	*ft_get_env_paths(t_pipex *pipex_args, int cmd_n);
 void	ft_close_all(t_pipex *pipex_args);
+void	ft_free_on_error(char **cmds);
 
 #endif
