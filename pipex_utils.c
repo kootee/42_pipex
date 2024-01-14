@@ -6,87 +6,100 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/12 11:05:38 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/14 15:31:10 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_free_on_error(char **ptrs_to_free)
+void	ft_free_strs(char **strs_to_free)
 {
-	while (*ptrs_to_free)
+	int	i;
+
+	i = 0;
+	while (strs_to_free[i])
 	{
-		free(*ptrs_to_free);
-		ptrs_to_free++;
+		free(strs_to_free[i]);
+		i++;
 	}
-	free(ptrs_to_free);
+	free(strs_to_free);
 }
 
 void	ft_init_pipex(t_pipex *pipex_args, int argc)
 {
-	if (pipex_args == NULL)
-		return ;
 	pipex_args->pipe[0] = 0;
-	pipex_args->pipe[1] = 1;
+	pipex_args->pipe[1] = 0;
+	pipex_args->fd_IO[0] = 0;
+	pipex_args->fd_IO[1] = 0;
 	pipex_args->here_doc = 0;
 	pipex_args->is_invalid_infile = 0;
 	pipex_args->env_paths = NULL;
 	pipex_args->cmd_args = NULL;
 	pipex_args->cmd_count = argc - 3;
-	pipex_args->fd_IO[0] = 0;
-	pipex_args->fd_IO[1] = 0;
-	return ;
 }
 
-char *ft_get_env_paths(t_pipex *pipex_args, int cmd_n)
+char	*ft_getenv(char **envp, char *str)
 {
-	char	**all_env;
-	char	*exec_path;
-	
-	while (*pipex_args->env_paths)
+	while (*envp)
 	{
-		if (ft_strnstr(*pipex_args->env_paths, "PATH", 5))
-		{			
-			all_env = ft_split((*pipex_args->env_paths + 5), ':'); //malloc protect
-			while (*all_env)
-			{
-				exec_path = ft_strjoin(*all_env, "/");
-				exec_path = ft_strjoin(exec_path, pipex_args->cmd_args[cmd_n]);
-				if (access(exec_path, F_OK & X_OK) < 0)
-					all_env++;
-				else
-				{
-					ft_free_on_error(all_env);
-					return (exec_path);
-				}
-			}
-		}		
-		pipex_args->env_paths++;
+		if (ft_strnstr(*envp, str, 4))
+			return(*envp + 5);
+		envp++;
 	}
 	return (NULL);
 }
 
-void	ft_check_args(t_pipex *pipex_args, char **argv, char **envp)
+char *ft_get_env_paths(t_pipex *pipex_args, char **cmds)
 {
-	int	i;
+	char	**all_env;
+	char	*exec_path;
+	char	*temp_path;
+	int		i;
 	
 	i = 0;
+	all_env = ft_split(ft_getenv(pipex_args->env_paths, "PATH"), ':');
+	if (all_env == NULL)
+		exit(EXIT_FAILURE);
+/* 	int j = 0;
+	while (all_env[j])
+	{
+		printf("env paths are %s\n", all_env[j]);
+		j++;
+	}
+	fflush(stdout); */
+	while (all_env[i])
+	{
+		temp_path = ft_strjoin(all_env[i], "/");
+		exec_path = ft_strjoin(temp_path, cmds[0]);
+		free(temp_path);
+		if (access(exec_path, F_OK & X_OK) == 0)
+		{
+			ft_free_strs(all_env);
+			return (exec_path);
+		}
+		free(exec_path);
+		i++;
+	}
+	ft_free_strs(all_env);
+	return (NULL);
+}
+
+void	ft_check_args(t_pipex *pipex_args, char **argv)
+{
 	pipex_args->fd_IO[0] = open(argv[1], O_RDONLY);
 	if (pipex_args->fd_IO[0] < 0)
 	{
 		perror("Error on opening infile");
-		exit(EXIT_FILE_OPEN_ERROR);
+		exit(EXIT_FAILURE);
 	}
 	pipex_args->fd_IO[1] = open(argv[4], O_RDWR | O_TRUNC | O_CREAT, 0644);
 	if (pipex_args->fd_IO[1] < 0)
 	{
 		perror("Error on opening outfile");
-		exit(EXIT_FILE_OPEN_ERROR);
+		exit(EXIT_FAILURE);
 	}
-	pipex_args->cmd_args = argv;
-	pipex_args->env_paths = envp;
 }
-
+/* IS THIS necessary */
 void	ft_close_all(t_pipex *pipex_args)
 {
 	close(pipex_args->pipe[0]);

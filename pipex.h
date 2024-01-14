@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/12 11:05:46 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/14 15:04:50 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,10 @@ typedef struct s_pipex
 
 int		main(int argc, char **argv, char **envp);
 void	ft_init_pipex(t_pipex *pipex_args, int argc);
-void	ft_check_args(t_pipex *pipex_args, char **args, char **envp);
-char	*ft_get_env_paths(t_pipex *pipex_args, int cmd_n);
+void	ft_check_args(t_pipex *pipex_args, char **args);
+char	*ft_get_env_paths(t_pipex *pipex_args, char **cmds);
 void	ft_close_all(t_pipex *pipex_args);
-void	ft_free_on_error(char **ptrs_to_free);
+void	ft_free_strs(char **ptrs_to_free);
+char	**ft_parse_commands(char *cmds);
 
 #endif

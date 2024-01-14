@@ -8,6 +8,7 @@ DEBUGFLAGS = -g
 
 SRCS = pipex.c \
 		pipex_utils.c \
+		parse_commands.c \
 		libft/libft.a
 
 OBJS = ${SRCS:.c=.o}
