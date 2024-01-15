@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/14 15:29:44 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/15 11:35:41 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	main(int argc, char **argv, char **envp)
 	i = 0;
 	while (cmds[i])
 	{
-		printf("command is [%d] %s\n", i, cmds[i]);
+		printf("--command is [%d] %s\n", i, cmds[i]);
 		i++;
 	}
 	fflush(stdout);

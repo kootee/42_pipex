@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 13:55:35 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/15 10:54:48 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/15 11:28:05 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,32 +66,33 @@ char	**ft_parse_commands(char *cmds)
 			while (cmds[i + j + 1] == ' ')
 				i++;
 			parsed_cmds[k] = ft_substr(cmds, j, i);
-			printf("parsed cmds[%d] is %s\n", k, parsed_cmds[k]);
+			printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
 			k++;
-			j = ++i;
+			j = ++i; // skips the space
 			i = 0;
 		}
 		if (cmds[j + i] == '\"' || cmds[j + i] == '\'')
 		{
 			i++;
-			while (cmds[j + i] != '\"' && cmds[j + i] != '\'')
+			while (cmds[j + i] != '\"' && cmds[j + i] != '\'') //also check if string ends
 			{
 				c = cmds[j + i];
 				i++;
 			}
 			parsed_cmds[k] = ft_substr(cmds, ++j, i - 1); //takes out the ''
-			printf("parsed cmds[%d] is %s\n", k, parsed_cmds[k]);
+			printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
 			k++;
 			j = i;
+			i = 0;
 		}
 		i++;
 	}
-	if (cmds[j + i - 1] != '\"' || cmds[j + i - 1] != '\'') // if k < argcount
+	if (k < arg_count) // if k < argcount
 	{
 		parsed_cmds[k] = ft_substr(cmds, j, i);
-		printf("parsed cmds[%d] is %s\n", k, parsed_cmds[k]);
+		printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
 	}
-	parsed_cmds[++k] = NULL;
-	printf("parsed cmds[%d] is %s\n", k, parsed_cmds[k]);
+	parsed_cmds[arg_count] = NULL;
+	printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
 	return (parsed_cmds);
 }
