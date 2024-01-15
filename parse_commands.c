@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 13:55:35 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/15 15:17:12 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:27:02 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	ft_count_args(char *cmds)
 		if (cmds[i] == ' ')
 		{
 			arg_count++;
-			while (cmds[i + 1] == ' ')
+			while (cmds[i] && cmds[i + 1] == ' ')
 				i++;
 		}
 		if (cmds[i] == '\"' || cmds[i] == '\'')
@@ -36,7 +36,8 @@ static int	ft_count_args(char *cmds)
 			while (cmds[i] && (cmds[i] != '\"' && cmds[i] != '\''))
 				i++;
 		}
-		i++;
+		if (cmds[i]) 
+			i++;
 	}
 	if (cmds[i - 1] != '\"' && cmds[i -1] != '\'')
 		arg_count++;
@@ -59,7 +60,7 @@ char	**ft_parse_commands(char *cmds)
 	i = 0;
 	j = 0;
 	k = 0;
-	while (cmds[i + j] && k < arg_count)
+	while (k < arg_count && cmds[i + j])
 	{
 		if (cmds[i + j] == ' ')
 		{
