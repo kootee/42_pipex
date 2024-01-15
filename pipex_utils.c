@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/14 15:31:10 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/15 13:36:02 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,6 @@ char *ft_get_env_paths(t_pipex *pipex_args, char **cmds)
 	all_env = ft_split(ft_getenv(pipex_args->env_paths, "PATH"), ':');
 	if (all_env == NULL)
 		exit(EXIT_FAILURE);
-/* 	int j = 0;
-	while (all_env[j])
-	{
-		printf("env paths are %s\n", all_env[j]);
-		j++;
-	}
-	fflush(stdout); */
 	while (all_env[i])
 	{
 		temp_path = ft_strjoin(all_env[i], "/");

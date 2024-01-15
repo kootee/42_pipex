@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 13:55:35 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/15 11:28:05 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:17:12 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,23 +18,23 @@ static int	ft_count_args(char *cmds)
 {
 	int	arg_count;
 	int	i;
-	char c; //4 debug
 
 	i = 0;
 	arg_count = 0;
 	while (cmds[i])
 	{
 		if (cmds[i] == ' ')
+		{
 			arg_count++;
-		else if (cmds[i] == '\"' || cmds[i] == '\'')
+			while (cmds[i + 1] == ' ')
+				i++;
+		}
+		if (cmds[i] == '\"' || cmds[i] == '\'')
 		{
 			arg_count++;
 			i++;
 			while (cmds[i] && (cmds[i] != '\"' && cmds[i] != '\''))
-			{
-				c = cmds[i]; //4 debug
 				i++;
-			}
 		}
 		i++;
 	}
@@ -63,12 +63,12 @@ char	**ft_parse_commands(char *cmds)
 	{
 		if (cmds[i + j] == ' ')
 		{
-			while (cmds[i + j + 1] == ' ')
-				i++;
 			parsed_cmds[k] = ft_substr(cmds, j, i);
-			printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
+			//printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
+			while (cmds[i + j + 1] == ' ') //skip whitespace
+				i++;
 			k++;
-			j = ++i; // skips the space
+			j += i + 1; // i + 1
 			i = 0;
 		}
 		if (cmds[j + i] == '\"' || cmds[j + i] == '\'')
@@ -80,19 +80,19 @@ char	**ft_parse_commands(char *cmds)
 				i++;
 			}
 			parsed_cmds[k] = ft_substr(cmds, ++j, i - 1); //takes out the ''
-			printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
+			//printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
 			k++;
 			j = i;
 			i = 0;
 		}
 		i++;
 	}
-	if (k < arg_count) // if k < argcount
+	if (k < arg_count)
 	{
 		parsed_cmds[k] = ft_substr(cmds, j, i);
-		printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
+		//printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
 	}
 	parsed_cmds[arg_count] = NULL;
-	printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[k]);
+	//printf("parsed cmds[%d] is -%s-\n", k, parsed_cmds[arg_count]);
 	return (parsed_cmds);
 }

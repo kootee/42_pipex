@@ -11,16 +11,16 @@
 			"envFile": "${workspaceFolder}/env_file.txt", 
             "externalConsole": false,
             "MIMode": "lldb",
-			"args": ["input", "grep Hello", "awk '{count++} END {print count}'", "output"],
+			"args": ["input", "grep Hello", "ls -l src/", "output"],
 			"stopAtEntry": true,
             "serverLaunchTimeout": 5000,
             "filterStderr": false,
-            "filterStdout": false,
-            "logging": {
+            "filterStdout": false
+/*             "logging": {
                 "moduleLoad": false,
                 "trace": true,
                 "traceResponse": true
-            },
+            }, */
 		}
 	]
 }

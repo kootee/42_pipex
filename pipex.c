@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/15 11:35:41 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/15 14:48:52 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,11 @@ static void	ft_execute(t_pipex *pipex_args, int cmd_n, char **env)
 	char *exec_path;
 	
 	cmds = ft_parse_commands(pipex_args->cmd_args[cmd_n]);
+	/*
 	int	i = 0;
-	while (cmds[i])
-		printf("cmds are %s\n", cmds[i++]);
+ 	while (cmds[i])
+		printf("cmds are %s\n", cmds[i++]); 
+	*/
 	if (cmds == NULL)
 		exit(0);
 	exec_path = ft_get_env_paths(pipex_args, cmds);
@@ -93,11 +95,18 @@ int	main(int argc, char **argv, char **envp)
 		i++;
 	}
 	
-	char **cmds = ft_split(argv[3], ' ');
+	char **cmds = ft_split(argv[2], ' ');
+	char **cmds2 = ft_split(argv[3], ' ');
 	i = 0;
 	while (cmds[i])
 	{
-		printf("--command is [%d] %s\n", i, cmds[i]);
+		printf("-->command with split is [%d] %s\n", i, cmds[i]);
+		i++;
+	}
+	i = 0;
+	while (cmds2[i])
+	{
+		printf("-->command with split is [%d] %s\n", i, cmds2[i]);
 		i++;
 	}
 	fflush(stdout);
