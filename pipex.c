@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/15 14:48:52 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:29:58 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	
 	t_pipex *pipex_args;
-
+/* 
 	int	i = 0;
 	while (argv[i])
 	{
@@ -110,7 +110,7 @@ int	main(int argc, char **argv, char **envp)
 		i++;
 	}
 	fflush(stdout);
-
+ */
 	if (argc != 5)
 	{
 		perror("invalid no of parameters given"); //return error about invalid arguments
