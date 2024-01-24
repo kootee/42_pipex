@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/14 15:04:50 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:51:59 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # define EXIT_FILE_OPEN_ERROR 3
 # define EXIT_FILE_READ_ERROR 4
 # define EXIT_PIPE_ERROR 5
-# define EXIT_EXEC_ERROR 6
+# define EXIT_EXEC_ERROR 127
 # define EXIT_MALLOC_FAIL 6
 # define EXIT_FORK_ERROR 7
 
