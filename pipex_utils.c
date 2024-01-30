@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/24 13:24:17 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:02:07 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ char *ft_get_env_paths(t_pipex *pipex_args, char **cmds)
 	char	*temp_path;
 	int		i;
 	
-	if (pipex_args->env_paths == NULL)
-		exit(23);
+	if (*pipex_args->env_paths == NULL)
+		return (NULL);
 	i = 0;
 	all_env = ft_split(ft_getenv(pipex_args->env_paths, "PATH"), ':');
-/* 	if (all_env == NULL)
+/* 	if (*all_env == NULL)
 		exit(23); */
 	while (all_env[i])
 	{
@@ -76,7 +76,8 @@ char *ft_get_env_paths(t_pipex *pipex_args, char **cmds)
 		i++;
 	}
 	ft_free_strs(all_env);
-	return (NULL);
+	perror("pipex: command not found");
+	exit(127);
 }
 /* IS THIS necessary */
 void	ft_close_all(t_pipex *pipex_args)

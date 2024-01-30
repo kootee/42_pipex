@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/23 13:51:59 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:59:42 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include <stdio.h>
+# include <stdio.h> //remove
 # include "libft/libft.h"
 
 /* Error message constants */

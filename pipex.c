@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/24 13:24:29 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/30 13:03:30 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,28 +18,18 @@ static void	ft_execute(t_pipex *pipex_args, int cmd_n, char **env)
 	char *exec_path;
 	
 	cmds = ft_parse_commands(pipex_args->cmd_args[cmd_n]);
-	/*
-	int	i = 0;
- 	while (cmds[i])
-		printf("cmds are %s\n", cmds[i++]); 
-	*/
 	if (cmds == NULL)
-		exit(EXIT_EXEC_ERROR);
+		exit(127);
 	if (access(cmds[0], F_OK & X_OK) == 0)
 		exec_path = cmds[0];
 	else
 		exec_path = ft_get_env_paths(pipex_args, cmds);
-	if (exec_path == NULL)
-	{
-		perror("pipex: command not found");
-		exit(EXIT_EXEC_ERROR);
-	}
-	else if (execve(exec_path, cmds, env) == -1)
+	if (execve(exec_path, cmds, env) == -1)
 	{		
 		free(exec_path);
 		ft_free_strs(cmds);
 		perror("execve failed");
-		exit(EXIT_EXEC_ERROR);
+		exit(127);
 	}
 }
 
@@ -107,6 +97,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	
 	t_pipex *pipex_args;
+	//char *null_env[] = {NULL};
 
 	if (argc != 5)
 	{
@@ -119,6 +110,7 @@ int	main(int argc, char **argv, char **envp)
 	ft_init_pipex(pipex_args, argc); // set default values
 	pipex_args->cmd_args = argv;
 	pipex_args->env_paths = envp;
+	//pipex_args->env_paths = null_env;
 	ft_pipex(pipex_args, envp);
 	//ft_close_all(pipex_args);
 	//return (0);
