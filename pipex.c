@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 16:33:08 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:47:09 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ static void	child_process(t_pipex *pipex_args, char **env)
 	dup2(fd_in, STDIN_FILENO); // has to be from fd where is read from
 	dup2(pipex_args->pipe[1], STDOUT_FILENO); // fd where to write
 	close(pipex_args->pipe[0]); // this one (read end of pipe) is NOT USED IN CHILD PROCESS!
-	//close(pipex_args->fd_IO[1]);
 	ft_execute(pipex_args, 2, env);
 }
 
@@ -63,7 +62,6 @@ static void	parent_process(t_pipex *pipex_args, char **env)
 	dup2(fd_out, STDOUT_FILENO); //where to write to
 	dup2(pipex_args->pipe[0], STDIN_FILENO); //where to read from
 	close(pipex_args->pipe[1]); // this one (write end of pipe) is NOT USED IN CHILD PROCESS!
-	//close(pipex_args->fd_IO[0]); //close the input file
 	ft_execute(pipex_args, 3, env); //or second to last one 
 }
 
@@ -74,19 +72,11 @@ static void	ft_pipex(t_pipex *pipex_args, char **env)
 	int		status;
 	
 	i = 0;
-	if (pipe(pipex_args->pipe) == -1)
-	{
-		perror("Pipe failed");
-		exit(3);
-	}
 	while (i < 2)
 	{	
 		pid[i] = fork(); 
 		if (pid[i] == -1)
-		{
-			perror("Fork failed");
 			exit(4);
-		}
 		if (pid[i] == 0 && i == 0)
 			child_process(pipex_args, env);
 		else if (pid[i] == 0 && i == 1)
@@ -96,19 +86,10 @@ static void	ft_pipex(t_pipex *pipex_args, char **env)
 	close_all_pipes(pipex_args);
 	while (0 < i--)
 	{
-		if (0 < wait(&status))
-		{
-			if (status == 13)
-			{	
-				perror("child exited with errorcode 13");
-				exit(45);
-			}
-			if (!WIFEXITED(status))
-			{
-				perror("child exited with error");
-				//printf("status was %d\n", status);
-			}
-		}
+		wait(&status);
+		if (!WIFEXITED(status))
+			perror("child exited with error");
+
 	}
 	
 }
@@ -117,9 +98,6 @@ int	main(int argc, char **argv, char **envp)
 {
 	
 	t_pipex *pipex_args;
-	//pid_t	pid;
-	//int		status;
-	//char *null_env[] = {NULL};
 
 	if (argc != 5)
 	{
@@ -132,23 +110,8 @@ int	main(int argc, char **argv, char **envp)
 	ft_init_pipex(pipex_args, argc); // set default values
 	pipex_args->cmd_args = argv;
 	pipex_args->env_paths = envp;
+	if (pipe(pipex_args->pipe) == -1)
+		exit(3);
 	ft_pipex(pipex_args, envp);
-	//pipex_args->env_paths = null_env;
-/* 	pid = fork();
-	if (pid < 0)
-	{
-		perror("Fork failed");
-		exit(4);
-	}
-	if (pid == 0)
-	else
-	{	
-		while (wait(&pid) > 0)
-		{
-			printf("waiting %i\n", pid);
-		}
-	} */
-	//waitpid(pid, &status, 0);
 	close_all_pipes(pipex_args);
-	//return (0);
 }

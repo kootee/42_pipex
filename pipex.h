@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 15:17:15 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:47:00 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@
 typedef struct s_pipex
 {
 	int	pipe[2]; //add second array for bonus part [i][2]
-	int	fd_IO[2];
 	int here_doc;
 	int is_invalid_infile;
 	char **env_paths;

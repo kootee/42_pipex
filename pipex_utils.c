@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 16:27:34 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:47:19 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ void	ft_init_pipex(t_pipex *pipex_args, int argc)
 {
 	pipex_args->pipe[0] = 0;
 	pipex_args->pipe[1] = 0;
-	pipex_args->fd_IO[0] = 0;
-	pipex_args->fd_IO[1] = 0;
 	pipex_args->here_doc = 0;
 	pipex_args->is_invalid_infile = 0;
 	pipex_args->env_paths = NULL;
@@ -85,6 +83,4 @@ void	close_all_pipes(t_pipex *pipex_args)
 {
 	close(pipex_args->pipe[0]);
 	close(pipex_args->pipe[1]);
-	close(pipex_args->fd_IO[0]);
-	close(pipex_args->fd_IO[1]);
 }
