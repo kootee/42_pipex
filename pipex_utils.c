@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 16:55:46 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 17:39:58 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ void	ft_init_pipex(t_pipex *pipex_args, int argc)
 {
 	pipex_args->pipe[0] = 0;
 	pipex_args->pipe[1] = 0;
-	pipex_args->here_doc = 0;
-	pipex_args->is_invalid_infile = 0;
 	pipex_args->env_paths = NULL;
 	pipex_args->cmd_args = NULL;
 	pipex_args->cmd_count = argc - 3;
