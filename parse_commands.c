@@ -6,13 +6,11 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 13:55:35 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 18:12:59 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:17:00 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-/* awk '{count++} END {print count}' */
 
 static int	ft_count_args(char *cmds)
 {
@@ -68,7 +66,7 @@ char	**ft_parse_commands(char *cmds)
 			while (cmds[i + j + 1] == ' ')
 				i++;
 			k++;
-			j += i + 1; // i + 1
+			j += i + 1;
 			i = 0;
 		}
 		if (cmds[j + i] == '\"' || cmds[j + i] == '\'')
