@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 17:44:22 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 18:11:15 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,11 @@ static void	ft_execute(t_pipex *pipex_args, int cmd_n, char **env)
 		exec_path = cmds[0];
 	else
 		exec_path = ft_get_env_paths(pipex_args, cmds);
+	if (exec_path == NULL)
+	{
+		perror("pipex: command not found");
+		exit(EXIT_CMD_NOT_FOUND);
+	}
 	if (execve(exec_path, cmds, env) == -1 || exec_path == NULL)
 	{
 		free(exec_path);
