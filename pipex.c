@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/15 15:29:58 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:33:08 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,112 +18,137 @@ static void	ft_execute(t_pipex *pipex_args, int cmd_n, char **env)
 	char *exec_path;
 	
 	cmds = ft_parse_commands(pipex_args->cmd_args[cmd_n]);
-	/*
-	int	i = 0;
- 	while (cmds[i])
-		printf("cmds are %s\n", cmds[i++]); 
-	*/
 	if (cmds == NULL)
-		exit(0);
-	exec_path = ft_get_env_paths(pipex_args, cmds);
-	if (exec_path == NULL)
-	{
-		exit(EXIT_FAILURE);
-	}
-	if (execve(exec_path, cmds, env) == -1)
+		exit(127);
+	if (access(cmds[0], F_OK & X_OK) == 0)
+		exec_path = cmds[0];
+	else
+		exec_path = ft_get_env_paths(pipex_args, cmds);
+	if (execve(exec_path, cmds, env) == -1 || exec_path == NULL)
 	{		
-		perror("execve failed");
 		free(exec_path);
 		ft_free_strs(cmds);
-		exit(EXIT_FAILURE);
+		perror("execve failed");
+		exit(127);
 	}
 }
 
 static void	child_process(t_pipex *pipex_args, char **env)
 {
-	dup2(pipex_args->fd_IO[0], STDIN_FILENO); // has to be from fd where is read from
+	int	fd_in;
+
+	fd_in = open(pipex_args->cmd_args[1], O_RDONLY);
+	if (fd_in < 0)
+	{
+		perror("pipex: input");
+		exit(78);
+	}
+	dup2(fd_in, STDIN_FILENO); // has to be from fd where is read from
 	dup2(pipex_args->pipe[1], STDOUT_FILENO); // fd where to write
 	close(pipex_args->pipe[0]); // this one (read end of pipe) is NOT USED IN CHILD PROCESS!
-	close(pipex_args->fd_IO[1]);
+	//close(pipex_args->fd_IO[1]);
 	ft_execute(pipex_args, 2, env);
 }
 
 static void	parent_process(t_pipex *pipex_args, char **env)
 {
+	int	fd_out;
+	
+	fd_out = open(pipex_args->cmd_args[4], O_RDWR | O_TRUNC | O_CREAT, 0644);
+	if (fd_out < 0)
+	{
+		perror("pipex: output");
+		exit(79);
+	}
+	dup2(fd_out, STDOUT_FILENO); //where to write to
 	dup2(pipex_args->pipe[0], STDIN_FILENO); //where to read from
-	dup2(pipex_args->fd_IO[1], STDOUT_FILENO); //where to write to
 	close(pipex_args->pipe[1]); // this one (write end of pipe) is NOT USED IN CHILD PROCESS!
-	close(pipex_args->fd_IO[0]); //close the input file
+	//close(pipex_args->fd_IO[0]); //close the input file
 	ft_execute(pipex_args, 3, env); //or second to last one 
 }
 
 static void	ft_pipex(t_pipex *pipex_args, char **env)
 {
-	pid_t	pid;
+	pid_t	pid[2];
 	int		i;
+	int		status;
 	
 	i = 0;
 	if (pipe(pipex_args->pipe) == -1)
 	{
 		perror("Pipe failed");
-		exit(EXIT_FAILURE);
+		exit(3);
 	}
-	pid = fork(); 
-	if (pid == -1)
+	while (i < 2)
+	{	
+		pid[i] = fork(); 
+		if (pid[i] == -1)
+		{
+			perror("Fork failed");
+			exit(4);
+		}
+		if (pid[i] == 0 && i == 0)
+			child_process(pipex_args, env);
+		else if (pid[i] == 0 && i == 1)
+			parent_process(pipex_args, env);
+		i++;
+	}
+	close_all_pipes(pipex_args);
+	while (0 < i--)
 	{
-		perror("Fork failed");
-		exit(EXIT_FAILURE);
+		if (0 < wait(&status))
+		{
+			if (status == 13)
+			{	
+				perror("child exited with errorcode 13");
+				exit(45);
+			}
+			if (!WIFEXITED(status))
+			{
+				perror("child exited with error");
+				//printf("status was %d\n", status);
+			}
+		}
 	}
-	if (pid == 0)
-		child_process(pipex_args, env);
-	else
-	{
-		//wait(&pid);
-		parent_process(pipex_args, env);
-	}
+	
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	
 	t_pipex *pipex_args;
-/* 
-	int	i = 0;
-	while (argv[i])
-	{
-		printf("command is [%d] %s\n", i, argv[i]);
-		i++;
-	}
-	
-	char **cmds = ft_split(argv[2], ' ');
-	char **cmds2 = ft_split(argv[3], ' ');
-	i = 0;
-	while (cmds[i])
-	{
-		printf("-->command with split is [%d] %s\n", i, cmds[i]);
-		i++;
-	}
-	i = 0;
-	while (cmds2[i])
-	{
-		printf("-->command with split is [%d] %s\n", i, cmds2[i]);
-		i++;
-	}
-	fflush(stdout);
- */
+	//pid_t	pid;
+	//int		status;
+	//char *null_env[] = {NULL};
+
 	if (argc != 5)
 	{
 		perror("invalid no of parameters given"); //return error about invalid arguments
-		exit(EXIT_FAILURE);
+		exit(5);
 	}
 	pipex_args = malloc(sizeof(t_pipex));
 	if (pipex_args == NULL)
-		exit(EXIT_FAILURE);
+		exit(6);
 	ft_init_pipex(pipex_args, argc); // set default values
-	ft_check_args(pipex_args, argv); //opens files and sets fds to pipex args
 	pipex_args->cmd_args = argv;
 	pipex_args->env_paths = envp;
 	ft_pipex(pipex_args, envp);
-	//ft_close_all(pipex_args);
+	//pipex_args->env_paths = null_env;
+/* 	pid = fork();
+	if (pid < 0)
+	{
+		perror("Fork failed");
+		exit(4);
+	}
+	if (pid == 0)
+	else
+	{	
+		while (wait(&pid) > 0)
+		{
+			printf("waiting %i\n", pid);
+		}
+	} */
+	//waitpid(pid, &status, 0);
+	close_all_pipes(pipex_args);
 	//return (0);
 }

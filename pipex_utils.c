@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/16 14:23:01 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:27:34 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,12 @@ char *ft_get_env_paths(t_pipex *pipex_args, char **cmds)
 	char	*temp_path;
 	int		i;
 	
+	if (*pipex_args->env_paths == NULL)
+		return (NULL);
 	i = 0;
 	all_env = ft_split(ft_getenv(pipex_args->env_paths, "PATH"), ':');
-	if (all_env == NULL)
-		exit(EXIT_FAILURE);
+/* 	if (*all_env == NULL)
+		exit(23); */
 	while (all_env[i])
 	{
 		temp_path = ft_strjoin(all_env[i], "/");
@@ -68,34 +70,18 @@ char *ft_get_env_paths(t_pipex *pipex_args, char **cmds)
 		if (access(exec_path, F_OK & X_OK) == 0)
 		{
 			ft_free_strs(all_env);
-			printf("returning path %s\n", exec_path);
 			return (exec_path);
 		}
 		free(exec_path);
 		i++;
 	}
 	ft_free_strs(all_env);
-	perror("Command not found");
-	exit(EXIT_FAILURE);
-}
-
-void	ft_check_args(t_pipex *pipex_args, char **argv)
-{
-	pipex_args->fd_IO[0] = open(argv[1], O_RDONLY);
-	if (pipex_args->fd_IO[0] < 0)
-	{
-		//perror("Error on opening infile");
-		exit(EXIT_FAILURE);
-	}
-	pipex_args->fd_IO[1] = open(argv[4], O_RDWR | O_TRUNC | O_CREAT, 0644);
-	if (pipex_args->fd_IO[1] < 0)
-	{
-		//perror("Error on opening outfile");
-		exit(EXIT_FAILURE);
-	}
+	perror("pipex: command not found");
+	return (NULL);
+	//exit(127);
 }
 /* IS THIS necessary */
-void	ft_close_all(t_pipex *pipex_args)
+void	close_all_pipes(t_pipex *pipex_args)
 {
 	close(pipex_args->pipe[0]);
 	close(pipex_args->pipe[1]);

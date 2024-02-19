@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 13:55:35 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/01/15 15:27:02 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:38:46 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,18 @@ static int	ft_count_args(char *cmds)
 		if (cmds[i] == ' ')
 		{
 			arg_count++;
-			while (cmds[i] && cmds[i + 1] == ' ')
+			while (cmds[i] && cmds[i] == ' ') // or i + 1
 				i++;
 		}
 		if (cmds[i] == '\"' || cmds[i] == '\'')
 		{
 			arg_count++;
 			i++;
+			while (cmds[i] && (cmds[i] == '\"' || cmds[i] == '\''))
+				i++;
 			while (cmds[i] && (cmds[i] != '\"' && cmds[i] != '\''))
 				i++;
+			//ft_check_if_end();
 		}
 		if (cmds[i]) 
 			i++;
