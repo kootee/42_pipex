@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 16:47:00 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/19 16:56:27 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
-# include <stdio.h> //remove
+# include <stdio.h>
 # include "libft/libft.h"
 
 /* Error message constants */
@@ -26,8 +26,8 @@
 # define EXIT_FILE_READ_ERROR 4
 # define EXIT_PIPE_ERROR 5
 # define EXIT_EXEC_ERROR 6
-# define EXIT_MALLOC_FAIL 7
-# define EXIT_FORK_ERROR 8
+# define EXIT_MALLOC_FAIL 6
+# define EXIT_FORK_ERROR 7
 
 typedef struct s_pipex
 {
