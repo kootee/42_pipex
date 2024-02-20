@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/20 10:15:41 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/20 12:03:21 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ static void	ft_execute(t_pipex *pipex_args, int cmd_n, char **env)
 	{
 		free(exec_path);
 		ft_free_strs(cmds);
-		exit(EXIT_EXEC_ERROR);
+		perror("pipex: commad not found");
+		exit(EXIT_CMD_NOT_FOUND);
 	}
 }
 
@@ -44,9 +45,8 @@ static void	child_process(t_pipex *pipex_args, char **env)
 	fd_in = open(pipex_args->cmd_args[1], O_RDONLY);
 	if (fd_in < 0)
 	{
-		//perror("pipex");
-		printf("%s", pipex_args->cmd_args[1]);
-		exit(EXIT_FILE_OPEN_ERROR);
+		perror("pipex");
+		exit(EXIT_FORK_ERROR);
 	}
 	dup2(fd_in, STDIN_FILENO);
 	dup2(pipex_args->pipe[1], STDOUT_FILENO);
@@ -89,8 +89,12 @@ static void	ft_pipex(t_pipex *pipex_args, char **env)
 	while (0 < i--)
 	{
 		wait(&status);
-		if (!WIFEXITED(status))
-			exit(45);
+		if (WIFEXITED(status) == 0)
+		{
+			//perror("pipex: command not found");
+			ft_putstr_fd("command not found written to stderr:\n", 2);
+			exit(EXIT_CMD_NOT_FOUND);
+		}
 	}
 }
 

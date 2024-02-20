@@ -11,7 +11,7 @@
 			"envFile": "${workspaceFolder}/env_file.txt", 
             "externalConsole": false,
             "MIMode": "lldb",
-			"args": ["input", "grep Hello", "buzzfizz", "output"],
+			"args": ["input", "cat", "cat", "output"],
 			"stopAtEntry": true,
             "serverLaunchTimeout": 5000,
             "filterStderr": false,

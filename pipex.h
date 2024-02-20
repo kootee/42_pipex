@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/20 10:11:23 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/20 11:43:19 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@
 # define EXIT_EXEC_ERROR 6
 # define EXIT_MALLOC_FAIL 6
 # define EXIT_FORK_ERROR 7
-# define EXIT_CMD_NOT_FOUND 8
+# define EXIT_CMD_NOT_FOUND 127
 # define EXIT_ARG_COUNT 22
+
 
 typedef struct s_pipex
 {
