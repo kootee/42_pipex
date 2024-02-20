@@ -11,7 +11,7 @@
 			"envFile": "${workspaceFolder}/env_file.txt", 
             "externalConsole": false,
             "MIMode": "lldb",
-			"args": ["input", "cat", "cat", "output"],
+			"args": ["input", "s", "s", "output"],
 			"stopAtEntry": true,
             "serverLaunchTimeout": 5000,
             "filterStderr": false,
