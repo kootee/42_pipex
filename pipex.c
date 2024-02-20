@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/20 17:10:37 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/20 17:53:54 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,12 @@ static void	ft_execute(t_pipex *pipex_args, int cmd_n, char **env)
 		exec_path = cmds[0];
 	else
 		exec_path = ft_get_env_paths(pipex_args, cmds);
-/* 	if (exec_path == NULL)
-	{
-		perror("pipex: command not found exec path null");
-		exit(EXIT_CMD_NOT_FOUND);
-	} */
-	if (execve(exec_path, cmds, env) == -1 || exec_path == NULL)
+	if (exec_path == NULL || execve(exec_path, cmds, env) < 0)
 	{
 		free(exec_path);
 		ft_free_strs(cmds);
-		perror("pipex: commad not found execve fail");
-		exit(127);
+		perror("pipex: commad not found");
+		exit(EXIT_CMD_NOT_FOUND);
 	}
 }
 
@@ -44,10 +39,7 @@ static void	child_process1(t_pipex *pipex_args, char **env)
 
 	fd_in = open(pipex_args->cmd_args[1], O_RDONLY);
 	if (fd_in < 0)
-	{
 		perror("pipex");
-		exit(EXIT_FORK_ERROR);
-	}
 	dup2(fd_in, STDIN_FILENO);
 	dup2(pipex_args->pipe[1], STDOUT_FILENO);
 	close(pipex_args->pipe[0]);
@@ -60,78 +52,40 @@ static void	child_process2(t_pipex *pipex_args, char **env)
 
 	fd_out = open(pipex_args->cmd_args[4], O_RDWR | O_TRUNC | O_CREAT, 0644);
 	if (fd_out < 0)
-	{
 		perror("pipex");
-		exit(EXIT_FILE_OPEN_ERROR);
-	}
 	dup2(fd_out, STDOUT_FILENO);
 	dup2(pipex_args->pipe[0], STDIN_FILENO);
 	close(pipex_args->pipe[1]);
 	ft_execute(pipex_args, 3, env);
 }
 
-static int	ft_pipex(t_pipex *pipex_args, char **env)
+static void	ft_pipex(t_pipex *pipex_args, char **env)
 {
 	pid_t	pid[2];
-	int		status[2];
-	int		i;
-	int		exit_status;
+	int		status;
 
-	i = 0;
-/* 	while (i < 2)
-	{
-		pid[i] = fork();
-		if (pid[i] == -1)
-			exit(4);
-		if (pid[i] == 0 && i == 0)
-			child_process1(pipex_args, env);
-		else if (pid[i] == 0 && i == 1)
-			child_process2(pipex_args, env);
-		i++;
-	} */
 	pid[0] = fork();
+	if (pid[0] < 0)
+		exit(EXIT_FORK_ERROR);
 	if (pid[0] == 0)
 		child_process1(pipex_args, env);
-	close_all_pipes(pipex_args);
 	pid[1] = fork();
+	if (pid[1] < 0)
+		exit(EXIT_FORK_ERROR);
 	if (pid[1] == 0)
 		child_process2(pipex_args, env);
 	close_all_pipes(pipex_args);
-	//waitpid(pid[0], &status[0], 0);
-	waitpid(pid[1], &status[1], 0);
-	exit_status = 12;
-/* 	if (WIFEXITED(status[0]) == 0)
-	{
-		perror("pipex: command not found_1");
-		exit(127);
-	} */
-	if (WIFEXITED(status[1]))
-	{
-		//perror("test");
-		exit_status = WEXITSTATUS(status[1]);
-		return (exit_status);
-	}
-	return (0);
+	waitpid(pid[1], &status, 0);
+	if (WIFEXITED(status))
+		exit(WEXITSTATUS(status));
 }
-/* 	while (0 < i--)
-	{
-		wait(&status);
-		if (WIFEXITED(status) == 0)
-		{
-			perror("pipex: command not found");
-			//ft_putstr_fd("command not found written to stderr:\n", 2);
-			exit(EXIT_CMD_NOT_FOUND);
-		}
-	} */
-	
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	*pipex_args;
-	int		exit_status;
 
 	if (argc != 5)
-		return (0);
+		exit(0);
 	pipex_args = malloc(sizeof(t_pipex));
 	if (pipex_args == NULL)
 		exit(EXIT_MALLOC_FAIL);
@@ -140,7 +94,6 @@ int	main(int argc, char **argv, char **envp)
 	pipex_args->env_paths = envp;
 	if (pipe(pipex_args->pipe) == -1)
 		exit(EXIT_PIPE_ERROR);
-	exit_status = ft_pipex(pipex_args, envp);
+	ft_pipex(pipex_args, envp);
 	close_all_pipes(pipex_args);
-	return (exit_status);
 }
