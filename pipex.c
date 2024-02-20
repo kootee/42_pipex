@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 18:11:15 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/20 10:15:41 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ static void	child_process(t_pipex *pipex_args, char **env)
 	fd_in = open(pipex_args->cmd_args[1], O_RDONLY);
 	if (fd_in < 0)
 	{
-		perror("pipex: input");
+		//perror("pipex");
+		printf("%s", pipex_args->cmd_args[1]);
 		exit(EXIT_FILE_OPEN_ERROR);
 	}
 	dup2(fd_in, STDIN_FILENO);
@@ -98,7 +99,7 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	*pipex_args;
 
 	if (argc != 5)
-		exit(EXIT_ARG_COUNT);
+		return (0);
 	pipex_args = malloc(sizeof(t_pipex));
 	if (pipex_args == NULL)
 		exit(EXIT_MALLOC_FAIL);

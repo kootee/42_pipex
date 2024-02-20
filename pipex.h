@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 17:57:02 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/20 10:11:23 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include <string.h>
 # include "libft/libft.h"
 
-# define EXIT_ARG_COUNT 2
 # define EXIT_FILE_OPEN_ERROR 3
 # define EXIT_FILE_READ_ERROR 4
 # define EXIT_PIPE_ERROR 5
@@ -27,6 +27,7 @@
 # define EXIT_MALLOC_FAIL 6
 # define EXIT_FORK_ERROR 7
 # define EXIT_CMD_NOT_FOUND 8
+# define EXIT_ARG_COUNT 22
 
 typedef struct s_pipex
 {
