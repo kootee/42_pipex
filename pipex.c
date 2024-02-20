@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/20 12:03:21 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/20 12:04:47 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ static void	ft_pipex(t_pipex *pipex_args, char **env)
 		if (WIFEXITED(status) == 0)
 		{
 			//perror("pipex: command not found");
-			ft_putstr_fd("command not found written to stderr:\n", 2);
+			//ft_putstr_fd("command not found written to stderr:\n", 2);
 			exit(EXIT_CMD_NOT_FOUND);
 		}
 	}
