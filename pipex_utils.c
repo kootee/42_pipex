@@ -6,13 +6,13 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 18:12:11 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/21 15:08:49 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_free_strs(char **strs_to_free)
+void	free_strs(char **strs_to_free)
 {
 	int	i;
 
@@ -25,7 +25,7 @@ void	ft_free_strs(char **strs_to_free)
 	free(strs_to_free);
 }
 
-void	ft_init_pipex(t_pipex *pipex_args, int argc)
+void	init_pipex(t_pipex *pipex_args, int argc)
 {
 	pipex_args->pipe[0] = 0;
 	pipex_args->pipe[1] = 0;
@@ -45,7 +45,7 @@ char	*ft_getenv(char **envp, char *str)
 	return (NULL);
 }
 
-char	*ft_get_env_paths(t_pipex *pipex_args, char **cmds)
+char	*get_env_paths(t_pipex *pipex_args, char **cmds)
 {
 	char	**all_env;
 	char	*exec_path;
@@ -63,13 +63,13 @@ char	*ft_get_env_paths(t_pipex *pipex_args, char **cmds)
 		free(temp_path);
 		if (access(exec_path, F_OK & X_OK) == 0)
 		{
-			ft_free_strs(all_env);
+			free_strs(all_env);
 			return (exec_path);
 		}
 		free(exec_path);
 		i++;
 	}
-	ft_free_strs(all_env);
+	free_strs(all_env);
 	return (NULL);
 }
 

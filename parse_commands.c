@@ -6,13 +6,50 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 13:55:35 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/19 18:17:00 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/21 15:13:27 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static int	ft_count_args(char *cmds)
+static void	reset_counters(t_pipex *pipex_args)
+{
+	pipex_args->c[0] = 0;
+	pipex_args->c[1] = 0;
+	pipex_args->c[2] = 0;
+}
+
+static void	skip_whitespace(char *cmd, int *arg_count, int *i)
+{
+	(*arg_count)++;
+	while (cmd[*i] && cmd[*i] == ' ')
+		(*i)++;
+}
+
+static void	iterate_cmds(char *cmd, char **parsed_cmds, t_pipex *p)
+{
+	if (cmd[p->c[0] + p->c[1]] == ' ')
+	{
+		parsed_cmds[p->c[2]] = ft_substr(cmd, p->c[1], p->c[0]);
+		while (cmd[p->c[0] + p->c[1] + 1] == ' ')
+			p->c[0]++;
+		p->c[2]++;
+		p->c[1] += p->c[0] + 1;
+		p->c[0] = 0;
+	}
+	if (cmd[p->c[0] + p->c[1]] == '\"' || cmd[p->c[0] + p->c[1]] == '\'')
+	{
+		p->c[0]++;
+		while (cmd[p->c[1] + p->c[0]] != '\"' && cmd[p->c[1] + p->c[0]] != '\'')
+			p->c[0]++;
+		parsed_cmds[p->c[2]] = ft_substr(cmd, ++(p->c[1]), p->c[0] - 1);
+		p->c[2]++;
+		p->c[1] = p->c[0];
+		p->c[0] = 0;
+	}
+}
+
+static int	count_args(char *cmds)
 {
 	int	arg_count;
 	int	i;
@@ -22,11 +59,7 @@ static int	ft_count_args(char *cmds)
 	while (cmds[i])
 	{
 		if (cmds[i] == ' ')
-		{
-			arg_count++;
-			while (cmds[i] && cmds[i] == ' ') // or i + 1
-				i++;
-		}
+			skip_whitespace(cmds, &arg_count, &i);
 		if (cmds[i] == '\"' || cmds[i] == '\'')
 		{
 			arg_count++;
@@ -35,9 +68,8 @@ static int	ft_count_args(char *cmds)
 				i++;
 			while (cmds[i] && (cmds[i] != '\"' && cmds[i] != '\''))
 				i++;
-			//ft_check_if_end();
 		}
-		if (cmds[i]) 
+		if (cmds[i])
 			i++;
 	}
 	if (cmds[i - 1] != '\"' && cmds[i -1] != '\'')
@@ -45,44 +77,23 @@ static int	ft_count_args(char *cmds)
 	return (arg_count);
 }
 
-char	**ft_parse_commands(char *cmds)
+char	**parse_commands(char *cmds, t_pipex *p)
 {
-	char **parsed_cmds;
-	int	arg_count;
-	int	i;
-	int j;
-	int k;
-	
-	arg_count = ft_count_args(cmds);
-	parsed_cmds = malloc(sizeof(char *) * (arg_count + 1)); //protect
-	i = 0;
-	j = 0;
-	k = 0;
-	while (k < arg_count && cmds[i + j])
+	char	**parsed_cmds;
+	int		arg_count;
+
+	arg_count = count_args(cmds);
+	parsed_cmds = malloc(sizeof(char *) * (arg_count + 1));
+	reset_counters(p);
+	if (parsed_cmds == NULL)
+		exit(EXIT_MALLOC_FAIL);
+	while (p->c[2] < arg_count && cmds[p->c[0] + p->c[1]])
 	{
-		if (cmds[i + j] == ' ')
-		{
-			parsed_cmds[k] = ft_substr(cmds, j, i);
-			while (cmds[i + j + 1] == ' ')
-				i++;
-			k++;
-			j += i + 1;
-			i = 0;
-		}
-		if (cmds[j + i] == '\"' || cmds[j + i] == '\'')
-		{
-			i++;
-			while (cmds[j + i] != '\"' && cmds[j + i] != '\'')
-				i++;
-			parsed_cmds[k] = ft_substr(cmds, ++j, i - 1);
-			k++;
-			j = i;
-			i = 0;
-		}
-		i++;
+		iterate_cmds(cmds, parsed_cmds, p);
+		p->c[0]++;
 	}
-	if (k < arg_count)
-		parsed_cmds[k] = ft_substr(cmds, j, i);
+	if (p->c[2] < arg_count)
+		parsed_cmds[p->c[2]] = ft_substr(cmds, p->c[1], p->c[0]);
 	parsed_cmds[arg_count] = NULL;
 	return (parsed_cmds);
 }

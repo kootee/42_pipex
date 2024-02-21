@@ -11,7 +11,7 @@
 			"envFile": "${workspaceFolder}/env_file.txt", 
             "externalConsole": false,
             "MIMode": "lldb",
-			"args": ["input", "s", "s", "output"],
+			"args": ["input", "sleep 5", "awk '{count++} END {print count}'", "output"],
 			"stopAtEntry": true,
             "serverLaunchTimeout": 5000,
             "filterStderr": false,

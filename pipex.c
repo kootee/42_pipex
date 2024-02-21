@@ -6,28 +6,28 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/20 17:53:54 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/21 15:14:37 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	ft_execute(t_pipex *pipex_args, int cmd_n, char **env)
+static void	execute_cmd(t_pipex *pipex_args, int cmd_n, char **env)
 {
 	char	**cmds;
 	char	*exec_path;
 
-	cmds = ft_parse_commands(pipex_args->cmd_args[cmd_n]);
+	cmds = parse_commands(pipex_args->cmd_args[cmd_n], pipex_args);
 	if (cmds == NULL)
 		exit(EXIT_CMD_NOT_FOUND);
 	if (access(cmds[0], F_OK & X_OK) == 0)
 		exec_path = cmds[0];
 	else
-		exec_path = ft_get_env_paths(pipex_args, cmds);
+		exec_path = get_env_paths(pipex_args, cmds);
 	if (exec_path == NULL || execve(exec_path, cmds, env) < 0)
 	{
 		free(exec_path);
-		ft_free_strs(cmds);
+		free_strs(cmds);
 		perror("pipex: commad not found");
 		exit(EXIT_CMD_NOT_FOUND);
 	}
@@ -43,7 +43,7 @@ static void	child_process1(t_pipex *pipex_args, char **env)
 	dup2(fd_in, STDIN_FILENO);
 	dup2(pipex_args->pipe[1], STDOUT_FILENO);
 	close(pipex_args->pipe[0]);
-	ft_execute(pipex_args, 2, env);
+	execute_cmd(pipex_args, 2, env);
 }
 
 static void	child_process2(t_pipex *pipex_args, char **env)
@@ -56,7 +56,7 @@ static void	child_process2(t_pipex *pipex_args, char **env)
 	dup2(fd_out, STDOUT_FILENO);
 	dup2(pipex_args->pipe[0], STDIN_FILENO);
 	close(pipex_args->pipe[1]);
-	ft_execute(pipex_args, 3, env);
+	execute_cmd(pipex_args, 3, env);
 }
 
 static void	ft_pipex(t_pipex *pipex_args, char **env)
@@ -75,6 +75,7 @@ static void	ft_pipex(t_pipex *pipex_args, char **env)
 	if (pid[1] == 0)
 		child_process2(pipex_args, env);
 	close_all_pipes(pipex_args);
+	waitpid(pid[0], &status, 0);
 	waitpid(pid[1], &status, 0);
 	if (WIFEXITED(status))
 		exit(WEXITSTATUS(status));
@@ -89,7 +90,7 @@ int	main(int argc, char **argv, char **envp)
 	pipex_args = malloc(sizeof(t_pipex));
 	if (pipex_args == NULL)
 		exit(EXIT_MALLOC_FAIL);
-	ft_init_pipex(pipex_args, argc);
+	init_pipex(pipex_args, argc);
 	pipex_args->cmd_args = argv;
 	pipex_args->env_paths = envp;
 	if (pipe(pipex_args->pipe) == -1)
