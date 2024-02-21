@@ -6,19 +6,15 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/21 14:48:42 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/21 16:18:56 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# include <stdlib.h>
-# include <unistd.h>
 # include <fcntl.h>
 # include <stdio.h>
-# include <sys/wait.h>
-# include <string.h>
 # include "libft/libft.h"
 
 # define EXIT_PIPE_ERROR 4
@@ -37,7 +33,7 @@ typedef struct s_pipex
 }	t_pipex;
 
 int		main(int argc, char **argv, char **envp);
-void	init_pipex(t_pipex *pipex_args, int argc);
+void	init_pipex(t_pipex *pipex_args, int argc, char **argv, char **envp);
 char	*get_env_paths(t_pipex *pipex_args, char **cmds);
 void	close_all_pipes(t_pipex *pipex_args);
 void	free_strs(char **ptrs_to_free);

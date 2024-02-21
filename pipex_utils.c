@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/21 15:08:49 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/21 16:09:50 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ void	free_strs(char **strs_to_free)
 	free(strs_to_free);
 }
 
-void	init_pipex(t_pipex *pipex_args, int argc)
+void	init_pipex(t_pipex *pipex_args, int argc, char **argv, char **envp)
 {
 	pipex_args->pipe[0] = 0;
 	pipex_args->pipe[1] = 0;
-	pipex_args->env_paths = NULL;
-	pipex_args->cmd_args = NULL;
+	pipex_args->cmd_args = argv;
+	pipex_args->env_paths = envp;
 	pipex_args->cmd_count = argc - 3;
 }
 

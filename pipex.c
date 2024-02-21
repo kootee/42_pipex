@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/21 15:14:37 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/21 16:09:25 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,7 @@ int	main(int argc, char **argv, char **envp)
 	pipex_args = malloc(sizeof(t_pipex));
 	if (pipex_args == NULL)
 		exit(EXIT_MALLOC_FAIL);
-	init_pipex(pipex_args, argc);
-	pipex_args->cmd_args = argv;
-	pipex_args->env_paths = envp;
+	init_pipex(pipex_args, argc, argv, envp);
 	if (pipe(pipex_args->pipe) == -1)
 		exit(EXIT_PIPE_ERROR);
 	ft_pipex(pipex_args, envp);
