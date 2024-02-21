@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/21 16:09:25 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/21 16:44:23 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,10 @@ static void	child_process1(t_pipex *pipex_args, char **env)
 
 	fd_in = open(pipex_args->cmd_args[1], O_RDONLY);
 	if (fd_in < 0)
+	{	
 		perror("pipex");
+		exit(EXIT_FAILURE);
+	}
 	dup2(fd_in, STDIN_FILENO);
 	dup2(pipex_args->pipe[1], STDOUT_FILENO);
 	close(pipex_args->pipe[0]);
