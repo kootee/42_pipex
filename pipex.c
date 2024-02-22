@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:26:52 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/22 13:35:21 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/22 13:56:38 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,12 @@ static void	ft_pipex(t_pipex *pipex_args, char **env)
 
 	pid[0] = fork();
 	if (pid[0] < 0)
-		exit(EXIT_FORK_ERROR);
+		exit(EXIT_FAILURE);
 	if (pid[0] == 0)
 		child_process1(pipex_args, env);
 	pid[1] = fork();
 	if (pid[1] < 0)
-		exit(EXIT_FORK_ERROR);
+		exit(EXIT_FAILURE);
 	if (pid[1] == 0)
 		child_process2(pipex_args, env);
 	close_all_pipes(pipex_args);
@@ -92,13 +92,16 @@ int	main(int argc, char **argv, char **envp)
 	t_pipex	*pipex_args;
 
 	if (argc != 5)
-		exit(0);
+	{
+		perror("incorrect number of arguments");
+		exit(EXIT_FAILURE);
+	}
 	pipex_args = malloc(sizeof(t_pipex));
 	if (pipex_args == NULL)
-		exit(EXIT_MALLOC_FAIL);
+		exit(EXIT_FAILURE);
 	init_pipex(pipex_args, argc, argv, envp);
 	if (pipe(pipex_args->pipe) == -1)
-		exit(EXIT_PIPE_ERROR);
+		exit(EXIT_FAILURE);
 	ft_pipex(pipex_args, envp);
 	close_all_pipes(pipex_args);
 }

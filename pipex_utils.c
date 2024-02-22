@@ -6,11 +6,22 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 10:31:38 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/22 13:14:09 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/22 13:57:56 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static char	*ft_getenv(char **envp, char *str)
+{
+	while (*envp)
+	{
+		if (ft_strnstr(*envp, str, 4))
+			return (*envp + 5);
+		envp++;
+	}
+	return (NULL);
+}
 
 void	free_strs(char **strs_to_free)
 {
@@ -32,17 +43,6 @@ void	init_pipex(t_pipex *pipex_args, int argc, char **argv, char **envp)
 	pipex_args->cmd_args = argv;
 	pipex_args->env_paths = envp;
 	pipex_args->cmd_count = argc - 3;
-}
-
-char	*ft_getenv(char **envp, char *str)
-{
-	while (*envp)
-	{
-		if (ft_strnstr(*envp, str, 4))
-			return (*envp + 5);
-		envp++;
-	}
-	return (NULL);
 }
 
 char	*get_env_paths(t_pipex *pipex_args, char **cmds)

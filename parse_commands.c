@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 13:55:35 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/22 10:41:41 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/22 13:52:49 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ char	**parse_commands(char *cmds, t_pipex *p)
 	parsed_cmds = malloc(sizeof(char *) * (arg_count + 1));
 	reset_counters(p);
 	if (parsed_cmds == NULL)
-		exit(EXIT_MALLOC_FAIL);
+		exit(EXIT_FAILURE);
 	while (p->c[2] < arg_count && cmds[p->c[0] + p->c[1]])
 	{
 		iterate_cmds(cmds, parsed_cmds, p);
