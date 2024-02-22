@@ -16,7 +16,7 @@ OBJS = ${SRCS:.c=.o}
 all: ${NAME}
 
 ${NAME}: ${OBJS}
-	${CC} ${DEBUGFLAGS} ${SRCS} -o ${NAME}
+	${CC} ${DEBUGFLAGS} ${CFLAGS} ${SRCS} -o ${NAME}
 
 libft/libft.a:
 	${MAKE} -C libft
