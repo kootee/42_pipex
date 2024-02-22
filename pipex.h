@@ -6,7 +6,7 @@
 /*   By: ktoivola <ktoivola@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:22:48 by ktoivola          #+#    #+#             */
-/*   Updated: 2024/02/21 16:18:56 by ktoivola         ###   ########.fr       */
+/*   Updated: 2024/02/22 13:25:59 by ktoivola         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
 # include <fcntl.h>
 # include <stdio.h>
 # include "libft/libft.h"
+
+# include <stdlib.h>
+# include <sys/wait.h>
+# include <unistd.h>
+# include <string.h>
+
 
 # define EXIT_PIPE_ERROR 4
 # define EXIT_EXEC_ERROR 5
