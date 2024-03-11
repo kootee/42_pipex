@@ -1,4 +1,4 @@
-# A Repository for "pipex" - project at 42 school Hive.
+# Repository for "pipex" - project at 42 school Hive.
 
 The objective of this project was to mimic the shell command pipe ("|"). to develop an understanding of especially the following C functions:
 - pipe()
